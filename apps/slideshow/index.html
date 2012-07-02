@@ -1,0 +1,45 @@
+<!DOCTYPE>
+<html>
+	<head>
+		<title>BackboneSlideShow</title>
+		
+		<!--CSS-->
+		<link rel = "stylesheet" href = "../../css/slideShow.css" />
+		
+		<!--JavaScript Libraries-->
+		<script type="text/javascript" charset="utf-8" src="../../libraries/jquery.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="../../libraries/underscore.js"> </script>
+		<script type="text/javascript" charset="utf-8" src="../../libraries/backbone.js"> </script>
+		
+		<!--Custom JavaScript-->
+		<script type="text/javascript" charset="utf-8" src="js/app.js"> </script>
+		
+		<!--Templates-->
+		<script type = "text/template" id = "slideShow-template">
+			<div id="slideController">
+				<div id="previous"> </div>
+				<div id="next"> </div>
+				<div id="window"">
+					<div id="belt"> 
+						<div id="tiles"> </div>
+					</div>
+				</div>
+			</div>
+			
+		</script>
+		
+		<script type = "text/template" id = "album-template">
+			<div class = "tile" id="<%= id %>">
+				<img src = "<%= photo %>">
+			</div>
+		</script>
+		
+	</head>
+	<body id = "indexPage">
+    	<div id = "#">
+			<div id = "page"> 
+				
+			</div>
+		</div>	
+  	</body>
+</html>
