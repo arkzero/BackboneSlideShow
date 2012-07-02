@@ -1,7 +1,7 @@
 div#slideController{
 	margin: 10%;
 	width: 80%;
-	height: 60%;
+	height: 300px;
 }
 
 #slideController div#previous{
@@ -31,7 +31,8 @@ div#slideController{
 	top: 5%;
 	left: 7%;
 	padding: 1%;
-	width: 84%;
+	padding-right: 11%;
+	width: 75%;
 	height: 84%;
 	background-color: #FFFFFF;
 	border: black solid 1px;
@@ -45,7 +46,7 @@ div#slideController{
 div.tile{
 	position: relative;
 	float: right;
-	width: 25%;
+	width: 20%;
 	height: 99%;
 	border: black solid 1px;
 	margin-left:2%;

@@ -36,7 +36,7 @@
     
     defaults: {
       position: 0,
-      tiles: 3,
+      tiles: 4,
       state: "play"
     },
     
@@ -131,7 +131,7 @@
         
         $('#'+this.model.get('position')).css('visibility', 'hidden');
         
-        $('.tile').animate({left: '+=220', }, 1000, function(){
+        $('.tile').animate({left: '+=169', }, 1000, function(){
           self.collection.shift();
         });
         this.model.next();
