@@ -27,7 +27,7 @@
     },
     
     isLastTile: function(index){
-      return index >= this.collection.length - 1;
+      return index >= window.tiles.length - 1;
     }
     
   });
@@ -35,20 +35,85 @@
   window.Controller = Backbone.Model.extend({
     
     defaults: {
-      position: 0,
+      firstTile: 0,
+      lastTile: 3,
       tiles: 4,
+      direction: "next",
       state: "play"
     },
     
     initialize: function(){
       this.slideShow = new SlideShow();
+      var tilePositions = [];
+      for (var i = 0; i < tiles; i++){
+        tilePositions[i] = i;
+      }
+      this.set({
+        tilePositions: tilePositions
+      })
     },
     
     next: function(){
-      var position = this.get('position')+1;
+      var firstTile = this.get('firstTile'),
+          tiles = this.get('tiles'),
+          tilePosition = [];
+      
+      if(window.tiles.isLastTile(firstTile)){
+        firstTile = 0;
+      }else{
+        firstTile++;
+      }
+      
+      tilePosition[0] = firstTile;
+      var position = firstTile;
+      for(var i=1; i<tiles; i++){
+        if(window.tiles.isLastTile(position)){
+          position = 0;
+        }else{
+          position++;
+        }
+        tilePosition[i] = position;
+      }
+      var lastTile = position;
+      
       this.set({
-        position: position
-      })
+        firstTile: firstTile,
+        lastTile: lastTile,
+        direction: "next",
+        tilePositions: tilePosition
+      });
+    },
+    
+    previous: function(){
+      var lastTile = this.get('lastTile'),
+          tiles = this.get('tiles'),
+          tilePosition = [],
+          length = window.tiles.length - 1;
+      
+      if(window.tiles.isFirstTile(lastTile)){
+        lastTile = length;
+      }else{
+        lastTile--;
+      }
+      
+      tilePosition[tiles-1] = lastTile;
+      var position = lastTile;
+      for(var i=tiles-2; i>= 0; i--){
+        if(window.tiles.isFirstTile(position)){
+          position = length;
+        }else{
+          position--;
+        }
+        tilePosition[i] = position;
+      }
+      var firstTile = position
+      
+      this.set({
+        firstTile: firstTile,
+        lastTile: lastTile,
+        direction: "previous",
+        tilePositions: tilePosition
+      });
     }
     
   });
@@ -57,7 +122,16 @@
   
   window.Tiles = Backbone.Collection.extend({
     model: Tile,
-    //url: '/album'
+    //url: '/messages'
+    
+    isFirstTile: function(index){
+      return (index == 0)
+    },
+    
+    isLastTile: function(index){
+      return(index == (this.models.length -1));  
+    },
+    
   });
   
   window.SlideShow = Tiles.extend({ });
@@ -92,11 +166,12 @@
       
       events:{
         'click #slideController #next' : 'next',
+        'click #slideController #previous': 'previous'
       },
       
       initialize: function(){
         //TODO: Figure out Bindings
-        this.collection.bind('remove', this.slideNext, this);
+        this.collection.bind('remove', this.slide, this);
         this.tiles = this.options.tiles;
       },
       
@@ -111,8 +186,13 @@
       
       renderTiles: function(){
         $('#tiles').empty();
-        var position = this.model.get('position');
+        var position = this.model.get('firstTile');
         var tiles = this.model.get('tiles');
+        
+        if(tiles > window.tiles.length){
+          tiles = window.tiles.length;
+        }
+        
         for(var i = position; i < position + tiles; i++){
           var model = this.tiles.at(i);
           var tileView = new TileView({
@@ -129,21 +209,33 @@
         
         var self = this;
         
-        $('#'+this.model.get('position')).css('visibility', 'hidden');
+        $('#'+this.model.get('firstTile')).css('visibility', 'hidden');
         
         $('.tile').animate({left: '+=169', }, 1000, function(){
-          self.collection.shift();
+          self.collection.shift();  
         });
         this.model.next();
       },
       
-      slideNext: function(){
-        $('#tiles').empty();
-        var position = this.model.get('position');
-        var tiles = this.model.get('tiles');
+      previous: function(){
+        var self = this;
         
-        for(var i = position; i < position + tiles; i++){
-          var model = this.tiles.at(i);
+        $('#'+this.model.get('lastTile')).css('visibility', 'hidden');
+        
+        $('.tile').animate({left: '-=169', }, 1000, function(){
+          self.collection.pop();
+        });
+        this.model.previous();
+      },
+      
+      slide: function(){
+        $('#tiles').empty();
+        var tilePositions = this.model.get("tilePositions");
+        var firstTile = this.model.get("firstTile");
+        var lastTile = this.model.get("lastTile");
+        
+        for (var i = 0; i < this.model.get("tiles"); i++){
+          var model = this.tiles.at(tilePositions[i]);
           var tileView = new TileView({
             el: $('#tiles'),
             model: model
@@ -152,9 +244,15 @@
           this.collection.add(model);
         }
         
-        $('#'+(position+(tiles-1))).fadeIn(3000,function(){
-          console.log('done');
-        });
+        if(this.model.get("direction") == "next"){
+          $('#'+this.model.get("lastTile")).fadeIn(3000,function(){
+            console.log('done');
+          });
+        }else{
+          $('#'+this.model.get("firstTile")).fadeIn(3000,function(){
+            console.log('done');
+          });
+        }
       }
       
     });
