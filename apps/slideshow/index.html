@@ -29,8 +29,21 @@
 		</script>
 		
 		<script type = "text/template" id = "album-template">
-			<div class = "tile" id="<%= id %>">
+			<div class = "tile" id="<%= id %>" data-id="<%= id %>">
 				<img src = "<%= photo %>">
+			</div>
+		</script>
+		
+		<script type = "text/template" id = "details-template">
+			<div class = "details">
+				<img src = "<%= photo %>" class = "detailsImage">
+				<div id = "info">
+					<p class = "title"><strong>Title:</strong><%= title %></p>
+					<p class = "description"><strong>Description:</strong><%= description %></p>
+				</div>
+				<div id = "nav">
+					<input type="button" id="backButton" value ="Back" />
+				</div>
 			</div>
 		</script>
 		

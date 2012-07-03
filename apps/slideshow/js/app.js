@@ -159,6 +159,21 @@
       
     });
     
+    DetailsView = Backbone.View.extend({
+      template: _.template($('#details-template').html()),
+      tag: 'div',
+      
+      initalize: function(){
+        this.model.bind('change', this.render, this);
+      },
+      
+      render: function(){
+        $(this.el).empty();
+        $(this.el).append(this.template(this.model.toJSON()));
+        return this;
+      }
+    });
+    
     SlideShowView = Backbone.View.extend({
       template: _.template($('#slideShow-template').html()),
       tag: 'div',
@@ -166,7 +181,8 @@
       
       events:{
         'click #slideController #next' : 'next',
-        'click #slideController #previous': 'previous'
+        'click #slideController #previous': 'previous',
+        'click #slideController .tile' : 'openTile'
       },
       
       initialize: function(){
@@ -226,6 +242,18 @@
           self.collection.pop();
         });
         this.model.previous();
+      },
+      
+      openTile: function(event){
+        event.preventDefault();
+        var id = $(event.currentTarget).data('id');
+        var model = this.tiles.at(id);
+        this.detailsView = new DetailsView({
+          model: model,
+          el: $('#tiles')
+        });
+        this.detailsView.render();
+        $('#slideController').addClass('detail');
       },
       
       slide: function(){
